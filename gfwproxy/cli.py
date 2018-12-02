@@ -102,7 +102,25 @@ def cmd_init(args):
 
 
 def cmd_mode(args):
-    pass
+    mode = args.value
+
+    ss_cfg = ss.load_config(_DEFAULT_SS_CONFIG_PATH)
+    local_host, local_port = ss_cfg['local_address'], ss_cfg['local_port']
+
+    if mode == 'global':
+        network.set_mode('manual', pac_file=_DEFAULT_PAC_PATH, sock_host=local_host, sock_port=local_port)
+        privoxy.set_mode('global', local_host, local_port)
+
+    elif mode == 'pac':
+        network.set_mode('auto', pac_file=_DEFAULT_PAC_PATH)
+        privoxy.set_mode('pac', local_host, local_port)
+
+    elif mode == 'direct':
+        network.set_mode('disabled')
+        privoxy.set_mode('direct', local_host, local_port)
+
+    else: raise Exception('Invalid mode {}'.format(mode))
+
 
 
 

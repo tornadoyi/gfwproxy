@@ -35,11 +35,12 @@ def _search(lines, *keys):
 
 
 def _pac_on_off(lines, on_off, pac_action_file=_DEFAULT_PAC_ACTION_FILE):
-    pac_name = os.path.splitext(os.path.basename(pac_action_file))[0]
-    index = _search(lines, 'actionsfile', pac_name)
+    pac_file = os.path.basename(pac_action_file)
+    index = _search(lines, 'actionsfile', pac_file)
     if on_off:
-        pac_content = 'actionsfile {}   # User PAC actions [add by gfwproxy]'.format(pac_name)
+        pac_content = 'actionsfile {}   # User PAC actions [add by gfwproxy]'.format(pac_file)
         if index >= 0: return lines
+        lines.append('\n')
         lines.append(pac_content)
     else:
         if index < 0: return lines
@@ -52,6 +53,7 @@ def _forward_on_off(lines, on_off, ip, port):
     index = _search(lines, 'forward-socks5t', '/')
     if on_off:
         if index >=0: return lines
+        lines.append('\n')
         lines.append('forward-socks5t   /               {}:{} .  # Forward to socket5 [add by gfwproxy]'.format(ip, port))
     else:
         if index < 0: return lines
@@ -62,7 +64,7 @@ def _forward_on_off(lines, on_off, ip, port):
 
 
 
-def set_mode(mode, config_file=_DEFAULT_CONFIG_FILE, ip='127.0.0.1', port=1080, pac_action_file=_DEFAULT_PAC_ACTION_FILE):
+def set_mode(mode, ip='127.0.0.1', port=1080, config_file=_DEFAULT_CONFIG_FILE, pac_action_file=_DEFAULT_PAC_ACTION_FILE):
     lines = _load_config(config_file)
     if mode == 'pac':
         lines = _forward_on_off(lines, False, ip, port)
