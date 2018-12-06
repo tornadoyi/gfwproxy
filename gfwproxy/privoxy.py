@@ -40,7 +40,7 @@ def _pac_on_off(lines, on_off, pac_action_file=_DEFAULT_PAC_ACTION_FILE):
     if on_off:
         pac_content = 'actionsfile {}   # User PAC actions [add by gfwproxy]'.format(pac_file)
         if index >= 0: return lines
-        lines.append('\n')
+        if lines[-1].find('\n') < 0: lines[-1] += '\n'
         lines.append(pac_content)
     else:
         if index < 0: return lines
@@ -74,7 +74,7 @@ def set_mode(mode, ip='127.0.0.1', port=1080, config_file=_DEFAULT_CONFIG_FILE, 
         lines = _forward_on_off(lines, True, ip, port)
         lines = _pac_on_off(lines, False, pac_action_file)
 
-    elif mode == 'direct':
+    elif mode == 'off':
         lines = _forward_on_off(lines, False, ip, port)
         lines = _pac_on_off(lines, False, pac_action_file)
 
@@ -102,3 +102,11 @@ def gen_pac_action(file_path, ip, port, proxy_list):
 
 
 
+def pid():
+    ret = shell.run("ps -ef | grep privoxy | grep -v grep | awk '{print $2}'", output='single')
+    if isinstance(ret, shell.CmdRunError): raise Exception(str(ret))
+
+    try:
+        return int(ret)
+    except:
+        return -1

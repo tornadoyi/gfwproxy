@@ -5,7 +5,7 @@ from pyplus.subprocess import shell
 from genpac.core import _GFWLIST_URL, parse_rules
 
 
-def _get_genpac_path(): return shell.run('which genpac', output='str').rstrip('\n')
+def _get_genpac_path(): return shell.run('which genpac', output='single')
 
 
 def gen(pac_file, local_host, local_port, gfwlist_url = _GFWLIST_URL):

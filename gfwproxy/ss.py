@@ -1,12 +1,11 @@
 import os
-import stat
 import json
 from pyplus.subprocess import shell
 
 _SSLOCAL_SERVICE = 'sslocal.service'
 
 
-def _get_sslocal_path(): return shell.run('which sslocal', output='str').rstrip('\n')
+def _get_sslocal_path(): return shell.run('which sslocal', output='single')
 
 
 def stop():
@@ -21,7 +20,7 @@ def start():
 
 
 def pid():
-    ret = shell.run("ps -ef | grep sslocal | grep -v grep | awk '{print $2}'", output='str').rstrip('\n')
+    ret = shell.run("ps -ef | grep sslocal | grep -v grep | awk '{print $2}'", output='single')
     if isinstance(ret, shell.CmdRunError): raise Exception(str(ret))
 
     try:
