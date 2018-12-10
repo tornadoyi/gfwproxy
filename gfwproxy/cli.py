@@ -98,8 +98,6 @@ def cmd_init(args):
     # gen pac
     pac.gen(_DEFAULT_PAC_PATH, args.local_host, args.local_port)
 
-    # get gfwlist
-    direct_list, proxy_list = pac.fetch_gfwlist()
 
     # gen shadowsocks config
     ss.gen_config(_DEFAULT_SS_CONFIG_PATH,
@@ -112,8 +110,7 @@ def cmd_init(args):
                   method=args.proxy_method)
 
     # gen pac action
-    privoxy.gen_pac_action(privoxy._DEFAULT_PAC_ACTION_FILE,
-                           args.local_host, args.local_port, proxy_list)
+    privoxy.gen_pac_action(privoxy._DEFAULT_PAC_ACTION_FILE, args.local_host, args.local_port)
 
     # add sslocal to autostart
     ss.add_autostart(_DEFAULT_SS_CONFIG_PATH)

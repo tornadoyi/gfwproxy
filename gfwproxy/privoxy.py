@@ -1,11 +1,12 @@
 import os
 from pyplus.subprocess import shell
+from genpac.core import _GFWLIST_URL
 
 _DEFAULT_CONF_DIR = '/etc/privoxy'
 
 _DEFAULT_CONFIG_FILE = os.path.join(_DEFAULT_CONF_DIR, 'config')
 
-_DEFAULT_PAC_ACTION_FILE = os.path.join(_DEFAULT_CONF_DIR, 'gfwpac.action')
+_DEFAULT_PAC_ACTION_FILE = os.path.join(_DEFAULT_CONF_DIR, 'gfwlist.action')
 
 def _load_config(config_path):
     with open(config_path, 'r') as f:
@@ -87,18 +88,21 @@ def set_mode(mode, ip='127.0.0.1', port=1080, config_file=_DEFAULT_CONFIG_FILE, 
     if isinstance(ret, shell.CmdRunError): raise Exception(str(ret))
 
 
-def gen_pac_action(file_path, ip, port, proxy_list):
+def gen_pac_action(file_path, ip, port, gfwlist_url=_GFWLIST_URL):
 
     # remove old pac file
     if os.path.isfile(file_path): os.remove(file_path)
 
-    # create content
-    content = '{{+forward-override{{forward-socks5 {}:{} .}}}}\n'.format(ip, port)
-    for p in proxy_list:
-        content += p + '\n'
+    gfwlist2privoxy = os.path.join(os.path.basename(__file__), 'gfwlist2privoxy')
 
-    with open(file_path, 'w') as f:
-        f.write(content)
+    ret= shell.run('{} {} {}:{} {}'.format(
+        gfwlist2privoxy,
+        file_path,
+        ip, port,
+        gfwlist_url
+    ))
+
+    if isinstance(ret, shell.CmdRunError): raise Exception(str(ret))
 
 
 
