@@ -27,7 +27,7 @@ def init(config_file, profile_path):
     }
 
     # create config path
-    os.makedirs(os.path.basename(config_file), exist_ok=True)
+    os.makedirs(os.path.dirname(config_file), exist_ok=True)
 
     # reset
     with open(config_file, 'w+') as f:
