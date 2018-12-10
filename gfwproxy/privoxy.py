@@ -93,9 +93,11 @@ def gen_pac_action(file_path, ip, port, gfwlist_url=_GFWLIST_URL):
     # remove old pac file
     if os.path.isfile(file_path): os.remove(file_path)
 
+    bash = shell.run('which bash', output='single')
     gfwlist2privoxy = os.path.join(os.path.dirname(__file__), 'gfwlist2privoxy')
 
-    ret= shell.run('{} {} {}:{} {}'.format(
+    ret= shell.run('{} {} {} {}:{} {}'.format(
+        bash,
         gfwlist2privoxy,
         file_path,
         ip, port,
